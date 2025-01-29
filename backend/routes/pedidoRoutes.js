@@ -1,17 +1,33 @@
 const express = require("express");
 const Pedido = require("../models/Pedido");
+const Cliente = require("../models/Cliente");
 
 const router = express.Router();
 
-// Criar um novo pedido
 router.post("/", async (req, res) => {
   try {
-    const novoPedido = await Pedido.create(req.body);
+    const { cliente_id, total } = req.body;
+    
+    // Verificar se o cliente existe
+    const cliente = await Cliente.findByPk(cliente_id);
+    if (!cliente) return res.status(404).json({ erro: "Cliente não encontrado" });
+
+    const novoPedido = await Pedido.create({ cliente_id, total });
     res.status(201).json(novoPedido);
   } catch (error) {
     res.status(400).json({ erro: error.message });
   }
 });
+
+// Criar um novo pedido
+// router.post("/", async (req, res) => {
+//   try {
+//     const novoPedido = await Pedido.create(req.body);
+//     res.status(201).json(novoPedido);
+//   } catch (error) {
+//     res.status(400).json({ erro: error.message });
+//   }
+// });
 
 // Obter todos os pedidos
 router.get("/", async (req, res) => {
