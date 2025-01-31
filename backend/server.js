@@ -5,6 +5,7 @@ const pedidoRoutes = require("./routes/pedidoRoutes");
 const clienteRoutes = require("./routes/clienteRoutes");
 const produtoRoutes = require("./routes/produtoRoutes");
 const categoriaRoutes = require("./routes/categoriaRoutes");
+const carrinhoRoutes = require("./routes/carrinhoRoutes");
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,7 @@ app.use("/pedidos", pedidoRoutes);
 app.use("/clientes", clienteRoutes);
 app.use("/categorias", categoriaRoutes);
 app.use("/produtos", produtoRoutes);
+app.use("/carrinho", carrinhoRoutes);
 
 // Exportando  aimage,
 app.use("/uploads", express.static("uploads"));
