@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testando WebSocket</title>
+    <script>
+        const socket = io("http:localhost:5000");
+
+        socket.on("pedidoAtualizado", (data) => {
+            console.log("Pedido oatualizado", data);
+            document.getElementById("notificacoes").innerHTML = `<p>Pedido: ${data.id}: ${data.status}</p>`;
+        });
+    </script>
+</head>
+<body>
+    <h1>Notificações de pedidos</h1>
+    <div id="notificacoes"></div>
+</body>
+</html>
