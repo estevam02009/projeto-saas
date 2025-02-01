@@ -48,9 +48,12 @@ router.put("/:id", async (req, res) => {
     pedido.status = req.body.status;
     await pedido.save();
 
-    // Disparar evento WebSocket para atualizar um cliente
+    // 🔥 Obter ID do cliente e socket correspondente
     const io = req.app.get("soket.io");
-    io.emit("pedidoAtualizado", { id: pedido.id, status: pedido.status });
+    const socketId = clientesConectados[pedido.cliente.id];
+    if (socketId) {
+      io.emit("pedidoAtualizado", { id: pedido.id, status: pedido.status });
+    }
     
     res.json(pedido);
   } catch (error) {
