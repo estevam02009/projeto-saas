@@ -7,17 +7,48 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { cliente_id, total } = req.body;
-    
-    // Verificar se o cliente existe
-    const cliente = await Cliente.findByPk(cliente_id);
-    if (!cliente) return res.status(404).json({ erro: "Cliente não encontrado" });
 
-    const novoPedido = await Pedido.create({ cliente_id, total });
-    res.status(201).json(novoPedido);
+    // Criar pedido
+    const pedido = await Pedido.create({ cliente_id, total });
+
+    // 🔥 Notificar a cozinha em tempo real
+    const io = req.app.get("socketio");
+    Object.keys(cozinheirosConectados).forEach((socketId) => {
+      io.to(socketId).emit("novoPedido", pedido);
+    });
+
+    res.status(201).json(pedido);
   } catch (error) {
     res.status(400).json({ erro: error.message });
   }
 });
+
+// router.post("/", async (req, res) => {
+//   try {
+//     const { cliente_id, total } = req.body;
+
+//     // Criar pedido
+//     const pedido = await Pedido.create({
+//       cliente_id,
+//       total,
+//     });
+
+//     // 🔥 Notificar a cozinha em tempo real
+//     const io = req.app.get("socketio");
+//     cozinheirosConectados.forEach((socketId) => {
+//       io.to(socketId).emit("novoPedido", pedido);
+//     });
+    
+//     // Verificar se o cliente existe
+//     const cliente = await Cliente.findByPk(cliente_id);
+//     if (!cliente) return res.status(404).json({ erro: "Cliente não encontrado" });
+
+//     const novoPedido = await Pedido.create({ cliente_id, total });
+//     res.status(201).json(novoPedido);
+//   } catch (error) {
+//     res.status(400).json({ erro: error.message });
+//   }
+// });
 
 // Criar um novo pedido
 // router.post("/", async (req, res) => {

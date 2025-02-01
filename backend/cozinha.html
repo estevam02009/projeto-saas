@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Dashboard da Cozinha</title>
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <script>
+    const socket = io("http://localhost:5000");
+
+    // Registrar a cozinha no servidor
+    socket.emit("registrarCozinha");
+
+    // Ouvir novos pedidos
+    socket.on("novoPedido", (pedido) => {
+      const pedidosDiv = document.getElementById("pedidos");
+      const pedidoHTML = `<p><strong>Pedido #${pedido.id}</strong> - Total: €${pedido.total.toFixed(2)} <button onclick="prepararPedido(${pedido.id})">Preparar</button></p>`;
+      pedidosDiv.innerHTML += pedidoHTML;
+    });
+
+    // Marcar pedido como "Preparando"
+    function prepararPedido(pedidoId) {
+      fetch(`http://localhost:5000/pedidos/${pedidoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "Preparando" })
+      }).then(() => alert(`Pedido #${pedidoId} agora está em preparo!`));
+    }
+  </script>
+</head>
+<body>
+  <h1>📋 Dashboard da Cozinha</h1>
+  <div id="pedidos"><h3>Pedidos Pendentes:</h3></div>
+</body>
+</html>
